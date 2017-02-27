@@ -2,13 +2,14 @@
     "name": "sports-rls",
     "version": "0.1.0",
     "description": "sports static resource release",
-    "main": "index.js",
+    "main": "index",
+    "bin": "index",
     "scripts": {
         "build": "node index.js"
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/appcxy/release.git"
+        "url": "git+https://github.com/appcxy/sports-rls.git"
     },
     "author": "xiayu chen",
     "license": "ISC",
