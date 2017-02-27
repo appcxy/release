@@ -1,7 +1,7 @@
 {
-    "name": "release",
+    "name": "sports-rls",
     "version": "0.1.0",
-    "description": "sports static release",
+    "description": "sports static resource release",
     "main": "index.js",
     "scripts": {
         "build": "node index.js"
