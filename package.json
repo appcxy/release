@@ -1,7 +1,7 @@
 {
     "name": "release",
     "version": "0.1.0",
-    "description": "自动发版",
+    "description": "sports static release",
     "main": "index.js",
     "scripts": {
         "build": "node index.js"
@@ -10,10 +10,6 @@
         "type": "git",
         "url": "git+https://github.com/appcxy/release.git"
     },
-    "keywords": [
-        "jenkins",
-        "release"
-    ],
     "author": "xiayu chen",
     "license": "ISC",
     "bugs": {
@@ -21,6 +17,10 @@
     },
     "homepage": "https://github.com/appcxy/release#readme",
     "dependencies": {
+        "querystring": "0.2.0",
+        "co": "4.6.0",
+        "co-prompt": "1.0.0",
+        "child_process": "1.0.2",
         "opn": "^4.0.2"
     }
 }
