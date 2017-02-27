@@ -13,7 +13,10 @@
     "type": "git",
     "url": "git+https://github.com/appcxy/sports-rls.git"
   },
-  "author": "xiayu chen",
+  "author": {
+    "name": "xiayu chen",
+    "email": "appcxy@gmail.com"
+  },
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/appcxy/sports-rls/issues"
