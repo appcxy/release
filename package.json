@@ -14,9 +14,9 @@
   "author": "xiayu chen",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/appcxy/release/issues"
+    "url": "https://github.com/appcxy/sports-rls/issues"
   },
-  "homepage": "https://github.com/appcxy/release#readme",
+  "homepage": "https://github.com/appcxy/sports-rls#readme",
   "dependencies": {
     "querystring": "0.2.0",
     "co": "4.6.0",
