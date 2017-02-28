@@ -1,6 +1,6 @@
 {
   "name": "sports-rls",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "sports static resource release",
   "main": "index.js",
   "bin": {
