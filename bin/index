@@ -10,6 +10,7 @@ var exec = require('child_process').exec;
 var opn = require('opn');
 
 
+
 co(function*(){
 	var branch = yield prompt('branch name: ');
 	var path = yield prompt('release path: ' );
@@ -30,7 +31,7 @@ co(function*(){
 		}),
 		time: new Date().getTime()
 	});
-	var options = {
+	var req = http.request({
 		host: 'jenkins',
 		port: 80,
 		path: '/view/StaticResource_Release/job/staticdeploy_sports/build?delay=0sec',
@@ -39,17 +40,36 @@ co(function*(){
 			'Content-Type': 'application/x-www-form-urlencoded',
 			'Content-Length': content.length
 		}
-	};
-
-	var req = http.request(options, function(res){
-		var _data = '';
+	}, function(res){
+		let _data = '';
 
 		res.on('data', function(chunk){
 			_data += chunk;
 		});
 
 		res.on('end', function(){
-			// console.log( "\n--->>\nresult:", _data );
+			// console.log(_data);
+
+			//request last build version number
+			http.get({
+				host: 'jenkins',
+				port: 80,
+				path: '/view/StaticResource_Release/job/staticdeploy_sports/rssAll',
+				method: 'GET',
+				headers: {
+				    'Content-Type': 'application/json'
+				}
+			}, function(d){
+				let resData = null;
+			    d.on('data', function(data){
+			        resData += data;
+			    });
+			    d.on('end', function() {
+			        let lastVer = resData.match(/#\d+/)[0].replace('#', '');
+			        lastVer++;
+			        callGetVer(lastVer);
+			    });
+			});
 		});
 	});
 	req.write(content);
@@ -58,42 +78,62 @@ co(function*(){
 	console.log('发版中, 请稍后......');
 	
 
-
 	//get version
-	setTimeout(()=>{
-		http.get({
-			host: 'jenkins',
-			port: 80,
-			path: '/view/StaticResource_Release/job/staticdeploy_sports/lastSuccessfulBuild/consoleText',
-			method: 'GET',
-			headers: {
-			    'Content-Type': 'application/json'
-			}
-		}, function(res){
-		    var resData = '';
+	function callGetVer(version){
+		let getRequest = setInterval(()=>{
+			http.get({
+				host: 'jenkins',
+				port: 80,
+				path: '/view/StaticResource_Release/job/staticdeploy_sports/rssAll',
+				method: 'GET',
+				headers: {
+				    'Content-Type': 'application/json'
+				}
+			}, function(d){
+				let resData = null;
+			    d.on('data', function(data){
+			        resData += data;
+			    });
+			    d.on('end', function() {
+			        let diffVer = resData.match(/#\d+/)[0].replace('#', '');
+			        if( diffVer == version ){
+						http.get({
+							host: 'jenkins',
+							port: 80,
+							path: '/view/StaticResource_Release/job/staticdeploy_sports/'+ version +'/consoleText',
+							method: 'GET',
+							headers: {
+							    'Content-Type': 'application/json'
+							}
+						}, function(res){
+						    let resData = '';
 
-		    res.on('data', function(data){
-		        resData += data;
-		        // console.log(data);
-		    });
+						    res.on('data', function(data){
+						        resData += data;
+						    });
 
-		    res.on('end', function() {
-		        callback( resData );
-		    });
-		});
+						    res.on('end', function() {
+						        callback( resData );
+						    });
+						});
 
-		function callback( data ){
-			var ver = data.match(/VERSION=v_\d+/)[0].replace('VERSION=', '');
-			
-			exec('echo '+ ver +' | clip');
-			console.log( '发版成功, 版本号: ', ver, ' (已粘贴到剪切板)' );
-			opn('http://jenkins/view/StaticResource_Release/job/staticdeploy_sports/');
-		}
-	}, 1000 * 60 * 1);
-
+						function callback( data ){
+							let ver = data.match(/VERSION=v_\d+/)[0].replace('VERSION=', '');
+							
+							exec('echo '+ ver +' | clip');
+							console.log( '发版成功, 版本号: ', ver, ' (已粘贴到剪切板)' );
+							opn('http://jenkins/view/StaticResource_Release/job/staticdeploy_sports/'+ version +'/console');
+						}
+						clearInterval( getRequest );        	
+			        }
+			    });
+			});
+		}, 1000 * 3);
+	}
 
 
 	process.stdin.pause();
 });
+
 
 
